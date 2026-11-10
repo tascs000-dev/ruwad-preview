@@ -65,8 +65,29 @@
   async function playLines(lines, onLine, mediaId) {
     stopSpeech();
     const token = speechToken;
-    const src = mediaId && L.media && L.media[mediaId];
-    if (src) {
+    const assetBase = (document.querySelector('link[href$="css/site.css"]')?.getAttribute("href") || "assets/css/site.css").replace("css/site.css", "");
+    const fix = (u) => u.replace("{asset}", assetBase);
+    const raw = mediaId && L.media && L.media[mediaId];
+    const src = Array.isArray(raw) ? raw.map(fix) : typeof raw === "string" ? fix(raw) : raw;
+    // Per-line recordings (one file per line, from the studio export): exact caption sync.
+    if (Array.isArray(src) && src.length === lines.length) {
+      for (let i = 0; i < lines.length; i++) {
+        if (token !== speechToken) return false;
+        onLine?.(i);
+        const ok = await new Promise((res) => {
+          const a = new Audio(src[i]);
+          const stopper = setInterval(() => { if (token !== speechToken) { a.pause(); clearInterval(stopper); res(false); } }, 150);
+          a.onended = () => { clearInterval(stopper); res(true); };
+          a.onerror = () => { clearInterval(stopper); res(null); };
+          a.play().catch(() => { clearInterval(stopper); res(null); });
+        });
+        if (ok === null) return playLinesSpeech(lines.slice(i), (k) => onLine?.(i + k), token); // file missing or autoplay blocked
+        if (!ok) return false;
+        await new Promise((r) => setTimeout(r, 220));
+      }
+      return token === speechToken;
+    }
+    if (typeof src === "string") {
       const audio = new Audio(src);
       const total = lines.reduce((n, l) => n + l.en.length, 0);
       let ok = true;
@@ -83,6 +104,9 @@
       });
       if (ok) return token === speechToken;
     }
+    return playLinesSpeech(lines, onLine, token);
+  }
+  async function playLinesSpeech(lines, onLine, token) {
     for (let i = 0; i < lines.length; i++) {
       onLine?.(i);
       const ok = await sayLine(lines[i].en, lines[i].speaker || "narrator", token);
