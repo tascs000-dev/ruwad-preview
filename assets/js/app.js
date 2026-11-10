@@ -82,7 +82,7 @@
      Each event carries only: event name, page, language and mobile/desktop. Counts also
      stay in this browser (ruwad.events) so the prototype can show them. */
   const DEVICE = window.matchMedia && matchMedia("(max-width: 760px)").matches ? "mobile" : "desktop";
-  const EVENTS = ["page_view", "cta_level_check", "cta_waitlist", "placement_start", "placement_complete", "waitlist_submit", "register", "lesson_complete"];
+  const EVENTS = ["page_view", "cta_level_check", "cta_waitlist", "placement_start", "placement_complete", "waitlist_submit", "register", "lesson_complete", "taster_start", "taster_complete"];
   function track(event) {
     if (!EVENTS.includes(event)) return;
     const page = document.body.dataset.page || "";
@@ -297,7 +297,8 @@
       <h3>${t("خطتك المقترحة", "Your suggested plan")}</h3>
       <ol class="plan-weeks">${planSteps(p).map(([w, d]) => `<li><b>${w}</b><div>${d}</div></li>`).join("")}</ol>
       <p class="small muted">${t(`بمعدل ${p.hours} ساعات أسبوعيًا. يراجع معلم مؤهل جزأي الكتابة والاستماع قبل أي تسجيل.`, `At ${p.hours} hours a week. A qualified teacher reviews a writing and listening task before anyone enrols.`)}</p>
-      ${forDash ? "" : `<div class="flow-nav" style="margin-top:1.5rem">
+      ${forDash ? "" : `<p style="margin-top:1.5rem"><a class="btn primary" href="start.html#roadmap" data-go-roadmap>${t("التالي: هدفك وخريطة رحلتك", "Next: your goal and roadmap")}</a></p>
+      <div class="flow-nav" style="margin-top:1rem">
         <a class="btn ghost" href="start.html">${t("أعد المحاولة", "Start again")}</a>
         <span style="display:flex;gap:.75rem;flex-wrap:wrap">
           <a class="btn ghost" href="${p.route === "other-test" ? "courses.html" : "pricing.html?course=IELTS#waitlist"}">${t("انضم إلى قائمة الانتظار", "Join the waiting list")}</a>
@@ -344,12 +345,13 @@
     if (qGoal) { const r = $(`input[name="goal"][value="${CSS.escape(qGoal)}"]`, goalForm); if (r) r.checked = true; }
 
     const show = (name) => {
-      [goalForm, quizEl, writeEl, planEl].forEach((p) => { p.hidden = p.dataset.panel !== name; });
-      const order = ["goal", "quiz", "write", "plan"];
+      [goalForm, quizEl, writeEl, planEl, $('[data-panel="roadmap"]', flow)].forEach((p) => { if (p) p.hidden = p.dataset.panel !== name; });
+      const order = ["goal", "quiz", "write", "plan", "roadmap"];
       $$("[data-prog]", flow).forEach((li) => li.classList.toggle("on", order.indexOf(li.dataset.prog) <= order.indexOf(name)));
       const h = $(`[data-panel="${name}"] h2`, flow); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
       flow.scrollIntoView({ block: "start", behavior: "smooth" });
     };
+    window.RUWAD.flow = { show }; // journey.js adds the goal + roadmap step after the plan
 
     let goal = null, answers = [], idx = 0;
     goalForm.addEventListener("submit", (e) => {
