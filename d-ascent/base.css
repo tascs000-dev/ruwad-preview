@@ -1,0 +1,43 @@
+@import url('fonts.css');
+:root{
+  --night:#0D0A14; --night2:#17111F; --dusk:#2A1B3D; --plum:#4A2338;
+  --red:#EB473D; --amber:#F0965B; --sand:#F4EDE4; --paper:#FBF8F4; --ink:#14101C;
+  --mist:rgba(255,255,255,.62); --line:rgba(255,255,255,.12);
+  --grad:linear-gradient(100deg,#EB473D 0%,#F0965B 100%);
+  --ar:'IBM Plex Sans Arabic','Alexandria',system-ui,sans-serif;
+  --disp:'Alexandria','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+body{font-family:var(--ar);background:var(--night);color:#fff;line-height:1.6;overflow-x:hidden;transition:background-color .8s var(--ease),color .8s var(--ease)}
+img{max-width:100%;display:block}
+button,input{font:inherit;color:inherit}
+a{color:inherit}
+.disp{font-family:var(--disp);font-weight:800;letter-spacing:-.01em;line-height:1.12}
+[dir=ltr] .disp{letter-spacing:-.03em;line-height:1.0}
+.num{font-family:var(--disp);font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;display:inline-block}
+.ember{padding-top:.18em;margin-top:-.18em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kicker{font-family:var(--disp);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--mist)}
+.btn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:14px 24px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.btn:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #FFD2B0;outline-offset:3px}
+.btn-ember{background:var(--grad);color:#1A0D0A;box-shadow:0 8px 30px rgba(235,71,61,.35)}
+.btn-ember:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(235,71,61,.5)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:rgba(255,255,255,.16)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* Sada, the companion: a small dawn sun. Three flares orbit it, echoing the three blades of the mark. */
+.sada .flares{position:absolute;inset:-24%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 20%,rgba(255,196,138,.9) 25%,transparent 31% 53%,rgba(240,150,91,.9) 58%,transparent 64% 86%,rgba(235,71,61,.9) 91%,transparent 97%);-webkit-mask:radial-gradient(circle,transparent 57%,#000 59%,#000 67%,transparent 69%);mask:radial-gradient(circle,transparent 57%,#000 59%,#000 67%,transparent 69%);animation:flare 9s linear infinite}
+.sada.happy .flares{animation-duration:2.5s}
+.sada.think .flares{animation-duration:18s;opacity:.6}
+@keyframes flare{to{transform:rotate(360deg)}}
+.sada{--s:72px;width:var(--s);height:var(--s);position:relative;flex:none}
+.sada .orb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFD9BF 0%,#F0965B 30%,#EB473D 70%,#9E2A2A 100%);box-shadow:0 0 calc(var(--s)*.45) rgba(240,150,91,.55),inset 0 -6px 14px rgba(120,20,20,.35);animation:sadaFloat 4s ease-in-out infinite}
+.sada .eyes{position:absolute;top:38%;left:50%;transform:translateX(-50%);display:flex;gap:calc(var(--s)*.16)}
+.sada .eye{width:calc(var(--s)*.1);height:calc(var(--s)*.2);background:#2A0F0D;border-radius:99px;animation:blink 5s infinite;transform-origin:center}
+.sada.happy .eye{height:calc(var(--s)*.1);border-radius:99px 99px 0 0;background:transparent;border:calc(var(--s)*.035) solid #2A0F0D;border-bottom:0;width:calc(var(--s)*.14);animation:none}
+.sada.think .eye{height:calc(var(--s)*.07);animation:none}
+.sada.think .eyes{transform:translate(-30%,-10%)}
+@keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.1)}}
+@keyframes sadaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ruwad · Direction D · Ascent (concept prototype)</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="base.css">
+<style>
+/* ---------- header ---------- */
+.top{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,48px);transition:background .4s,backdrop-filter .4s}
+.top.solid{background:rgba(13,10,20,.72);backdrop-filter:blur(14px)}
+body.light .top.solid{background:rgba(251,248,244,.8)}
+.logo-tile{display:flex;align-items:center;background:var(--grad);border-radius:10px;padding:8px 12px;height:44px}
+.logo-tile img{height:28px;width:auto}
+.top nav{display:flex;gap:6px;align-items:center}
+.top nav a.l{padding:8px 12px;border-radius:99px;text-decoration:none;font-size:14px;opacity:.85}
+.top nav a.l:hover{opacity:1;background:rgba(255,255,255,.08)}
+.lang{background:none;border:1px solid var(--line);border-radius:99px;padding:7px 12px;font-size:13px;cursor:pointer}
+body.light .lang{border-color:rgba(0,0,0,.15)}
+@media(max-width:760px){.top nav a.l{display:none}}
+/* ---------- 3D stage ---------- */
+#stage{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.poster{position:fixed;inset:0;display:grid;place-items:center;z-index:0;pointer-events:none;transition:opacity .8s}
+.poster img{width:min(34vw,300px);filter:drop-shadow(0 0 60px rgba(240,150,91,.45))}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,transparent 0%,rgba(13,10,20,.35) 60%,rgba(13,10,20,.85) 100%);transition:opacity .8s}
+main{position:relative;z-index:2}
+section{position:relative;padding:clamp(80px,12vh,140px) clamp(20px,6vw,96px)}
+.chap{display:flex;justify-content:space-between;font-family:var(--disp);font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.6;margin-bottom:28px}
+/* ---------- hero ---------- */
+#hero{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:9vh}
+#hero h1{font-size:clamp(64px,11vw,180px);font-weight:900;line-height:1.08;max-width:60%}
+@media(max-width:900px){#hero h1{max-width:none}}
+[dir=ltr] #hero h1{line-height:.92}
+#hero .sub{max-width:560px;font-size:clamp(16px,1.6vw,20px);color:var(--mist);margin:22px 0 30px}
+#hero .row{display:flex;gap:12px;flex-wrap:wrap}
+.scrollcue{position:absolute;bottom:24px;inset-inline-end:clamp(20px,6vw,96px);font-size:12px;letter-spacing:.16em;opacity:.6;display:flex;gap:10px;align-items:center}
+.scrollcue i{width:1px;height:42px;background:linear-gradient(#fff,transparent);display:block;animation:cue 2s infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.split .w{display:inline-block;will-change:transform}
+.ember .w{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding:.22em 0 .1em;margin:-.22em 0 -.1em}
+/* ---------- gap ---------- */
+#gap{min-height:100svh;display:grid;grid-template-columns:1.1fr 1fr;gap:6vw;align-items:center}
+#gap h2{font-size:clamp(40px,6.2vw,96px)}
+.gap-ui{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:28px;padding:28px;backdrop-filter:blur(18px)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 22px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:99px;padding:9px 14px;font-size:14px;cursor:pointer;transition:all .25s}
+.chip[aria-pressed=true]{background:#fff;color:var(--ink);border-color:#fff}
+.slider{width:100%;accent-color:var(--amber);margin:8px 0 4px;direction:ltr}
+.stairs{display:flex;align-items:flex-end;gap:6px;height:180px;margin:22px 0 10px;direction:ltr}
+.stairs b{flex:1;border-radius:8px 8px 3px 3px;background:rgba(255,255,255,.1);transition:height .6s var(--ease),background .4s;position:relative}
+.stairs b.on{background:var(--grad)}
+.stairs b.you{background:#fff}
+.stairs b span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-family:var(--disp);opacity:.7}
+.gap-out{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.gap-out .big{font-size:56px;font-weight:800}
+.note{font-size:12px;color:var(--mist)}
+@media(max-width:900px){#gap{grid-template-columns:1fr}}
+/* ---------- ascent (pinned) ---------- */
+#ascent{height:100svh;padding:0;overflow:hidden}
+.asc-inner{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1.2fr;align-items:center;padding:0 clamp(20px,6vw,96px);gap:4vw}
+.asc-copy h2{font-size:clamp(36px,5vw,76px)}
+.asc-band{font-size:clamp(90px,14vw,220px);font-weight:900;line-height:1.05;margin-top:10px}
+.asc-week{font-family:var(--disp);font-size:14px;letter-spacing:.14em;opacity:.7;margin-top:8px}
+.asc-map{position:relative;height:78vh}
+.asc-map svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.node{position:absolute;transform:translate(-9px,50%);direction:ltr;display:flex;align-items:center;gap:12px;opacity:.25;transition:opacity .4s,transform .4s}
+.node.on{opacity:1}
+.node.flip{flex-direction:row-reverse;transform:translate(calc(-100% + 9px),50%)}
+.node .card{direction:rtl}[dir=ltr] .node .card{direction:ltr}
+.node .dot{width:18px;height:18px;border-radius:50%;background:var(--night);border:2px solid rgba(255,255,255,.5);flex:none;transition:all .4s}
+.node.on .dot{background:var(--amber);border-color:#FFD2B0;box-shadow:0 0 24px rgba(240,150,91,.8)}
+.node .card{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:14px;padding:10px 14px;backdrop-filter:blur(12px);white-space:nowrap}
+.node .card small{display:block;font-size:11px;opacity:.6;font-family:var(--disp);letter-spacing:.08em}
+.node .card b{font-size:14px;font-weight:600}
+@media(max-width:900px){.node .card{display:none}.node.last .card{display:block;white-space:normal;max-width:46vw}.asc-inner{grid-template-columns:1fr;grid-template-rows:auto 1fr;padding-top:90px}.asc-map{height:56vh}.asc-band{font-size:90px}.node .card{padding:7px 10px}.node .card b{font-size:12px}}
+/* ---------- try ---------- */
+#try{min-height:100svh;display:grid;place-items:center}
+.try-card{width:min(720px,100%);background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:32px;padding:clamp(22px,4vw,44px);backdrop-filter:blur(20px);position:relative}
+.try-head{display:flex;gap:18px;align-items:center;margin-bottom:22px}
+.bubble{background:rgba(255,255,255,.1);border-radius:18px;padding:12px 16px;font-size:15px}
+.try-card h2{font-size:clamp(28px,3.4vw,44px);margin-bottom:6px}
+.play{width:100%;justify-content:center;margin:18px 0}
+.wave{display:flex;gap:3px;height:28px;align-items:center;direction:ltr}
+.wave i{width:3px;border-radius:3px;background:#1A0D0A;height:30%;transition:height .1s}
+.q{font-size:18px;font-weight:600;margin:6px 0 14px;direction:ltr;text-align:left}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;direction:ltr}
+.opt{padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.05);cursor:pointer;font-family:var(--disp);font-size:20px;font-weight:700;transition:all .25s}
+.opt:hover{background:rgba(255,255,255,.12)}
+.opt.right{background:#2E7D5B;border-color:#6FD3A6}
+.opt.wrong{background:#6B2228;border-color:#E07A7A;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.feedback{min-height:52px;margin-top:16px;font-size:15px}
+.xp{position:absolute;font-family:var(--disp);font-weight:800;font-size:28px;pointer-events:none;color:#FFD2B0;text-shadow:0 0 20px rgba(240,150,91,.9)}
+.transcript{direction:ltr;text-align:left;font-size:14px;color:var(--mist);border-top:1px solid var(--line);padding-top:12px;margin-top:12px;display:none}
+.transcript mark{background:rgba(240,150,91,.3);color:#fff;border-radius:4px;padding:0 3px}
+/* ---------- moments (horizontal) ---------- */
+#moments{padding:0;height:100svh;overflow:hidden}
+.mom-head{position:absolute;top:clamp(80px,12vh,120px);inset-inline-start:clamp(20px,6vw,96px);z-index:2;max-width:620px}
+.mom-head h2{font-size:clamp(36px,5vw,80px)}
+.mom-track{position:absolute;bottom:7vh;inset-inline-start:0;display:flex;gap:28px;padding:0 clamp(20px,6vw,96px);will-change:transform}
+.mom{width:min(56vw,calc((100svh - 400px) * 1.5),720px);min-width:300px;flex:none}
+.mom figure{border-radius:22px;overflow:hidden;aspect-ratio:3/2;position:relative}
+.mom img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);will-change:transform}
+.mom .cap{display:flex;gap:16px;align-items:baseline;margin-top:14px}
+.mom .cap .n{font-family:var(--disp);font-size:13px;opacity:.6}
+.mom .cap b{font-size:clamp(18px,2vw,26px);font-weight:700;font-family:var(--disp)}
+.mom .cap p{font-size:14px;color:var(--mist)}
+@media(max-width:760px){.mom{width:82vw;min-width:0}.mom-track{bottom:auto;top:40svh}}
+/* ---------- progress (light) ---------- */
+#progress{background:transparent;color:var(--ink);min-height:100svh}
+#progress h2{font-size:clamp(36px,5.4vw,84px);max-width:900px}
+.dash{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:18px;margin-top:48px}
+.panel{background:#fff;border-radius:26px;padding:26px;box-shadow:0 20px 50px rgba(40,20,30,.08)}
+.panel h3{font-size:13px;font-family:var(--disp);letter-spacing:.12em;text-transform:uppercase;color:#7A6E72;font-weight:500;margin-bottom:12px}
+.gauge{position:relative;width:100%;max-width:280px;margin:auto;direction:ltr}
+.gauge svg{width:100%;display:block}
+.gauge .val{position:absolute;inset:0;display:grid;place-items:center;padding-top:30%}
+.gauge .val b{font-size:64px;font-weight:900;line-height:1}
+.gauge .val small{font-size:13px;color:#7A6E72}
+.skill{display:grid;grid-template-columns:78px 1fr 34px;gap:10px;align-items:center;margin:12px 0;font-size:14px}
+.skill .bar{height:10px;border-radius:99px;background:#F1E8E2;overflow:hidden}
+.skill .bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width 1.2s var(--ease)}
+.streak{display:flex;gap:6px;direction:ltr;margin:10px 0 18px}
+.streak i{flex:1;height:38px;border-radius:10px;background:#F1E8E2}
+.streak i.on{background:var(--grad)}
+.medals{display:flex;gap:14px;flex-wrap:wrap}
+.medal{width:84px;text-align:center;font-size:12px;color:#4A3F45;cursor:default}
+.medal .m{width:72px;height:72px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(from 200deg,#EB473D,#F0965B,#FFD2B0,#EB473D);box-shadow:0 10px 24px rgba(235,71,61,.3);transition:transform .6s var(--ease)}
+.medal:hover .m{transform:rotateY(180deg) scale(1.05)}
+.medal .m span{width:56px;height:56px;border-radius:50%;background:#1A1220;display:grid;place-items:center}
+.medal .m img{width:30px}
+.medal.locked .m{background:#E9E1DC;box-shadow:none}
+.medal.locked .m span{background:#F6F1EE}
+.medal.locked .m img{opacity:.25;filter:grayscale(1)}
+@media(max-width:900px){.dash{grid-template-columns:1fr}}
+/* ---------- proof ---------- */
+#proof{color:var(--ink);padding-top:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(0,0,0,.12)}
+.stat{padding:30px 0;border-bottom:1px solid rgba(0,0,0,.12)}
+.stat b{font-size:clamp(56px,8vw,120px);font-weight:900;line-height:1;display:block;direction:inherit;unicode-bidi:normal}
+.stat span{font-size:15px;color:#5E5258}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+/* ---------- CTA ---------- */
+#cta{background:var(--grad);color:#1A0D0A;min-height:90svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#cta h2{font-size:clamp(48px,9vw,150px);font-weight:900;max-width:1200px}
+#cta form{display:flex;gap:10px;margin-top:36px;max-width:620px;flex-wrap:wrap}
+#cta input{flex:1;min-width:220px;border:0;border-radius:99px;padding:16px 22px;background:rgba(255,255,255,.9);color:var(--ink)}
+#cta .btn{background:#1A0D0A;color:#fff}
+#cta .bgmark{position:absolute;inset-inline-end:-8vw;bottom:-14vw;width:60vw;opacity:.18;pointer-events:none}
+footer{background:var(--night);color:var(--mist);padding:28px clamp(20px,6vw,96px);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media(max-width:600px){.concept-tag{display:none}}
+.concept-tag{position:fixed;bottom:14px;inset-inline-start:14px;z-index:60;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:6px 10px;border-radius:99px;backdrop-filter:blur(8px);letter-spacing:.04em}
+</style>
+</head>
+<body>
+<a class="sr" href="#gap">تخطَّ إلى المحتوى</a>
+<header class="top" id="top">
+  <a href="#hero" class="logo-tile" aria-label="Ruwad English Academy"><img src="img/logo-white.svg" alt="Ruwad English Academy"></a>
+  <nav>
+    <a class="l" href="#ascent" data-en="The path">المسار</a>
+    <a class="l" href="#try" data-en="Try it">جرّب</a>
+    <a class="l" href="#progress" data-en="Progress">التقدّم</a>
+    <button class="lang" id="lang" aria-label="Switch language">EN</button>
+    <a class="btn btn-ember" style="padding:10px 18px" href="journey.html" data-en="My journey">رحلتي</a>
+  </nav>
+</header>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="poster" id="poster" aria-hidden="true"><img src="img/mark-gradient.svg" alt=""></div>
+<div class="vignette" id="vig"></div>
+
+<main>
+<!-- 00 HERO -->
+<section id="hero">
+  <div class="chap" style="justify-content:flex-start"><span data-en="Ruwad English Academy · IELTS · TOEFL · STEP">أكاديمية رواد للإنجليزية · IELTS · TOEFL · STEP</span></div>
+  <h1 class="disp split" data-en="Go<br><span class='ember'>first.</span>">اذهب<br><span class="ember">أولًا.</span></h1>
+  <p class="sub" data-en="Name the score your programme needs. We train you for it, week by week, in Arabic and English.">حدّد الدرجة التي يطلبها برنامجك. ندرّبك عليها أسبوعًا بأسبوع، بالعربية والإنجليزية.</p>
+  <div class="row">
+    <a class="btn btn-ember" href="#gap" data-en="Find my target score">اعرف درجتك المستهدفة</a>
+    <a class="btn btn-ghost" href="#try" data-en="Try a 20-second question">جرّب سؤالًا في 20 ثانية</a>
+  </div>
+  <div class="scrollcue"><i></i><span data-en="SCROLL">مرّر</span></div>
+</section>
+
+<!-- 01 THE GAP -->
+<section id="gap">
+  <div>
+    <div class="chap"><span data-en="Chapter 01 · The gap">الفصل 01 · الفجوة</span></div>
+    <h2 class="disp reveal" data-en="Your offer asks for <span class='ember' id='tgtTxt'>6.0</span><br>Where are you today?">برنامجك يطلب <span class="ember num" id="tgtTxt">6.0</span><br>وأين أنت اليوم؟</h2>
+    <p class="note reveal" style="font-size:16px;margin-top:20px;max-width:460px" data-en="Minimum IELTS scores from each programme's published requirements, checked 8 Nov 2026. Always confirm with the programme.">الحد الأدنى في IELTS من متطلبات كل برنامج المنشورة، آخر تحقق 8 نوفمبر 2026. تأكد دائمًا من البرنامج نفسه.</p>
+  </div>
+  <div class="gap-ui reveal">
+    <div class="kicker" data-en="Your programme">برنامجك</div>
+    <div class="chips" id="chips">
+      <button class="chip" aria-pressed="true" data-t="6.0">PIF GDP · 6.0</button>
+      <button class="chip" aria-pressed="false" data-t="6.5">KAPSARC · 6.5</button>
+      <button class="chip" aria-pressed="false" data-t="5.5">ANB Tuwaiq · 5.5</button>
+      <button class="chip" aria-pressed="false" data-t="5.5">SAL Towsal · 5.5</button>
+    </div>
+    <label class="kicker" for="cur" data-en="Your band today (estimate)">درجتك اليوم (تقديرًا)</label>
+    <input class="slider" type="range" id="cur" min="4" max="7" step="0.5" value="5">
+    <div class="stairs" id="stairs" aria-hidden="true"></div>
+    <div class="gap-out">
+      <div><div class="kicker" data-en="Gap">الفجوة</div><div class="big num" id="gapN">1.0</div></div>
+      <div style="text-align:end"><div class="kicker" data-en="Typical training">تدريب نموذجي</div><div style="font-size:22px;font-weight:700" id="weeks"></div></div>
+    </div>
+    <p class="note" data-en="An estimate from common IELTS guidance, not a promise. Your diagnostic test sets the real plan.">تقدير من الإرشادات الشائعة لاختبار IELTS، وليس وعدًا. اختبار التشخيص يحدّد خطتك الفعلية.</p>
+  </div>
+</section>
+
+<!-- 02 THE ASCENT (pinned, scroll-drawn) -->
+<section id="ascent">
+  <div class="asc-inner">
+    <div class="asc-copy">
+      <div class="chap"><span data-en="Chapter 02 · The ascent">الفصل 02 · الصعود</span></div>
+      <h2 class="disp" data-en="Eight weeks.<br>One rising line.">ثمانية أسابيع.<br>خطّ واحد يصعد.</h2>
+      <p class="note" id="ascSkill" style="font-size:18px;color:#fff;margin-top:6px"></p>
+      <div class="asc-band num ember" id="ascBand">01</div>
+      <div class="asc-week" id="ascWeek" data-en="WEEK 0 / 8">الأسبوع 0 / 8</div>
+    </div>
+    <div class="asc-map" id="ascMap">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#EB473D"/><stop offset="1" stop-color="#F0965B"/></linearGradient></defs>
+        <path id="ascPathBg" d="" fill="none" stroke="rgba(255,255,255,.12)" style="stroke-width:2px"/>
+        <path id="ascPath" d="" fill="none" stroke="url(#lg)" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:4px;filter:drop-shadow(0 0 8px rgba(240,150,91,.7))"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 03 TRY -->
+<section id="try">
+  <div class="try-card" id="tryCard">
+    <div class="try-head">
+      <div class="sada" id="sada" aria-hidden="true"><i class="flares"></i><div class="orb"></div><div class="eyes"><i class="eye"></i><i class="eye"></i></div></div>
+      <div class="bubble" id="sadaSays" data-en="I'm Sada, your practice companion. Listen once, then answer.">أنا صدى، رفيقك في التدريب. استمع مرة واحدة، ثم أجب.</div>
+    </div>
+    <div class="chap" style="margin-bottom:8px"><span data-en="Chapter 03 · Try it">الفصل 03 · جرّب</span><span>IELTS Listening · Part 1</span></div>
+    <h2 class="disp" data-en="20 seconds. One question.">20 ثانية. سؤال واحد.</h2>
+    <button class="btn btn-ember play" id="play"><span data-en="Play the recording">شغّل التسجيل</span><span class="wave" id="wave" aria-hidden="true"></span></button>
+    <p class="q">What time does the library open on Saturdays?</p>
+    <div class="opts" id="opts">
+      <button class="opt" data-a="0">8:30</button><button class="opt" data-a="1">9:30</button><button class="opt" data-a="0">10:30</button>
+    </div>
+    <div class="feedback" id="fb" aria-live="polite"></div>
+    <div class="transcript" id="tr">“The library opens at half past eight on weekdays, but on Saturdays it opens <mark>an hour later</mark>, and it's closed on Sundays.”</div>
+  </div>
+</section>
+
+<!-- 04 MOMENTS -->
+<section id="moments">
+  <div class="mom-head">
+    <div class="chap"><span data-en="Chapter 04 · What a score opens">الفصل 04 · ما تفتحه الدرجة</span></div>
+    <h2 class="disp" data-en="It starts as a number.<br>It becomes a story.">تبدأ رقمًا.<br>وتصير قصة.</h2>
+    <p class="note" style="margin-top:10px" data-en="Concept imagery, AI-generated. Real students and a real shoot at launch.">صور مفهوم مولّدة بالذكاء الاصطناعي. طلاب حقيقيون وتصوير حقيقي عند الإطلاق.</p>
+  </div>
+  <div class="mom-track" id="momTrack">
+    <div class="mom"><figure><img src="img/m1.jpg" alt="طالبة تذاكر ليلًا تحت ضوء مصباح" loading="lazy"></figure><div class="cap"><span class="n">01</span><div><b data-en="2 a.m., week three">الثانية فجرًا، الأسبوع الثالث</b><p data-en="Nobody sees this part. It counts most.">لا أحد يرى هذا الجزء. وهو الأهم.</p></div></div></div>
+    <div class="mom"><figure><img src="img/m2.jpg" alt="شاب يبتسم وهو يقرأ نتيجته في السيارة" loading="lazy"></figure><div class="cap"><span class="n">02</span><div><b data-en="The email you refresh twice">الرسالة التي تعيد فتحها مرتين</b><p data-en="Overall 6.5. Read it again.">الدرجة الكلية 6.5. اقرأها مرة أخرى.</p></div></div></div>
+    <div class="mom"><figure><img src="img/m3.jpg" alt="شابة تتحدث بثقة في مقابلة" loading="lazy"></figure><div class="cap"><span class="n">03</span><div><b data-en="The interview, in English">المقابلة، بالإنجليزية</b><p data-en="You've said these sentences fifty times.">قلت هذه الجمل خمسين مرة.</p></div></div></div>
+    <div class="mom"><figure><img src="img/m4.jpg" alt="شاب يمشي نحو بوابة المغادرة وعائلته تلوّح" loading="lazy"></figure><div class="cap"><span class="n">04</span><div><b data-en="Gate B12">البوابة B12</b><p data-en="The first in the family to go.">الأول في العائلة الذي يسافر.</p></div></div></div>
+    <div class="mom"><figure><img src="img/m5.jpg" alt="طالبة تمشي في ساحة جامعة في الخريف" loading="lazy"></figure><div class="cap"><span class="n">05</span><div><b data-en="First morning, new city">الصباح الأول، مدينة جديدة</b><p data-en="Went first. Not the last.">ذهبت أولًا. ولن تكون الأخيرة.</p></div></div></div>
+  </div>
+</section>
+
+<!-- 05 PROGRESS -->
+<section id="progress" data-light>
+  <div class="chap" style="color:var(--ink)"><span data-en="Chapter 05 · Progress you can see">الفصل 05 · تقدّم تراه</span></div>
+  <h2 class="disp reveal" data-en="Every lesson moves <span class='ember'>a number</span> you care about.">كل درس يحرّك <span class="ember">رقمًا</span> يهمّك.</h2>
+  <div class="dash">
+    <div class="panel reveal">
+      <h3 data-en="Estimated band">الدرجة المتوقعة</h3>
+      <div class="gauge">
+        <svg viewBox="0 0 200 120"><defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#EB473D"/><stop offset="1" stop-color="#F0965B"/></linearGradient></defs>
+          <path d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="#F1E8E2" stroke-width="14" stroke-linecap="round"/>
+          <path id="gArc" d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" style="transition:stroke-dashoffset 1.6s var(--ease)"/>
+          <line id="gTgt" x1="0" y1="0" x2="0" y2="0" stroke="#14101C" stroke-width="2.5"/>
+        </svg>
+        <div class="val"><b class="num" id="gVal">4.0</b><small data-en="target 6.5">الهدف 6.5</small></div>
+      </div>
+    </div>
+    <div class="panel reveal">
+      <h3 data-en="Four skills">المهارات الأربع</h3>
+      <div class="skill"><span data-en="Listening">الاستماع</span><div class="bar"><i data-w="78"></i></div><b class="num">6.5</b></div>
+      <div class="skill"><span data-en="Reading">القراءة</span><div class="bar"><i data-w="66"></i></div><b class="num">6.0</b></div>
+      <div class="skill"><span data-en="Writing">الكتابة</span><div class="bar"><i data-w="50"></i></div><b class="num">5.5</b></div>
+      <div class="skill"><span data-en="Speaking">المحادثة</span><div class="bar"><i data-w="58"></i></div><b class="num">6.0</b></div>
+    </div>
+    <div class="panel reveal">
+      <h3 data-en="This week">هذا الأسبوع</h3>
+      <div class="streak"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      <h3 data-en="Achievements">الإنجازات</h3>
+      <div class="medals">
+        <div class="medal"><div class="m"><span><img src="img/mark-gradient.svg" alt=""></span></div><span data-en="First full mock">أول اختبار كامل</span></div>
+        <div class="medal"><div class="m"><span><img src="img/mark-gradient.svg" alt=""></span></div><span data-en="5-day streak">5 أيام متتالية</span></div>
+        <div class="medal locked"><div class="m"><span><img src="img/mark-gradient.svg" alt=""></span></div><span data-en="Band 6 Writing">كتابة 6</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 PROOF -->
+<section id="proof" data-light>
+  <div class="stats">
+    <div class="stat reveal"><b class="num count" data-to="8">0</b><span data-en="live sessions">جلسات مباشرة</span></div>
+    <div class="stat reveal"><b class="num count" data-to="90">0</b><span data-en="minutes each">دقيقة لكل جلسة</span></div>
+    <div class="stat reveal"><b class="num count" data-to="10">0</b><span data-en="seats per cohort">مقاعد في كل دفعة</span></div>
+    <div class="stat reveal"><b class="num count" data-to="2">0</b><span data-en="languages in every lesson">لغتان في كل درس</span></div>
+  </div>
+</section>
+
+<!-- 07 CTA -->
+<section id="cta">
+  
+  <div class="chap" style="color:#1A0D0A;opacity:.7"><span data-en="Chapter 06 · Your turn">الفصل 06 · دورك</span></div>
+  <h2 class="disp split" data-en="Name the score.<br>We'll map the way.">سمِّ الدرجة.<br>نرسم الطريق.</h2>
+  <form id="ctaForm" novalidate>
+    <label class="sr" for="em">البريد</label>
+    <input id="em" type="email" placeholder="بريدك الإلكتروني" data-en-ph="Your email" autocomplete="off">
+    <button class="btn" type="submit" data-en="Join the founding cohort">انضم للدفعة الأولى</button>
+  </form>
+  <p id="ctaMsg" style="margin-top:14px;font-size:14px" data-en="Concept prototype: this form sends nothing.">نموذج تجريبي: هذا النموذج لا يرسل شيئًا.</p>
+</section>
+</main>
+<footer><span>Ruwad English Academy · Direction D “Ascent” · concept prototype, not published</span><span data-en="Logo: official, unchanged">الشعار: الرسمي دون تغيير</span></footer>
+<div class="concept-tag">Concept D · prototype</div>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+gsap.registerPlugin(ScrollTrigger);
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- language toggle (Arabic first) ---------- */
+let lang = 'ar';
+$('#lang').addEventListener('click', () => {
+  lang = lang === 'ar' ? 'en' : 'ar';
+  document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  $$('[data-en]').forEach(el => { if (!el.dataset.ar) el.dataset.ar = el.innerHTML; el.innerHTML = lang === 'en' ? el.dataset.en : el.dataset.ar; });
+  $$('[data-en-ph]').forEach(el => { if (!el.dataset.arPh) el.dataset.arPh = el.placeholder; el.placeholder = lang === 'en' ? el.dataset.enPh : el.dataset.arPh; });
+  $('#lang').textContent = lang === 'ar' ? 'EN' : 'عربي';
+  splitAll(); setTarget(target); updateGap(); ScrollTrigger.refresh();
+});
+
+/* ---------- header ---------- */
+ScrollTrigger.create({ start: 80, onUpdate: s => $('#top').classList.toggle('solid', s.scroll() > 80) });
+
+/* ---------- 3D mark (loaded after first paint) ---------- */
+let M = null;
+const hasGL = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } })();
+if (hasGL && !reduce) {
+  import('./mark3d.js').then(({ initMark }) => {
+    M = initMark($('#stage'));
+    $('#poster').style.opacity = 0;
+    buildMarkTimeline();
+  }).catch(() => {});
+}
+function buildMarkTimeline() {
+  const mobile = innerWidth < 900;
+  // Hero: mark floats centre-top. Gap: it parts along its channel and moves aside. Ascent: rises and shrinks, then fades.
+  const side = document.dir === 'rtl' ? -1 : 1;
+  Object.assign(M, { y: mobile ? 1.15 : 0.15, x: mobile ? 0 : side * 1.75, scale: mobile ? 0.62 : 1, rotY: side * -0.35 });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', endTrigger: '#try', end: 'top center', scrub: 1 } });
+  tl.to(M, { part: 1, rotY: side * 0.6, x: mobile ? 0 : side * 0.12, y: mobile ? 1.9 : 1.6, scale: mobile ? 0.45 : 0.34, duration: 1 })
+    .to(M, { part: 0, rotY: Math.PI * 2, rotX: -0.2, x: 0, y: 2.6, scale: 0.4, duration: 1.4 })
+    .to(M, { dustOpacity: 0.15, glow: 1.8, duration: 0.6 }, '<0.6');
+  gsap.to(['#stage', '#vig'], { opacity: 0, scrollTrigger: { trigger: '#ascent', start: 'top 70%', end: 'top 5%', scrub: true } });
+}
+
+/* ---------- word-split headline reveals ---------- */
+function splitAll() {
+  $$('.split').forEach(el => {
+    if (reduce) return;
+    const walk = n => [...n.childNodes].forEach(c => {
+      if (c.nodeType === 3 && c.textContent.trim()) {
+        const frag = document.createDocumentFragment();
+        c.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) frag.append(w); else { const s = document.createElement('span'); s.className = 'w'; s.textContent = w; frag.append(s); } });
+        c.replaceWith(frag);
+      } else if (c.nodeType === 1 && !c.classList.contains('w') && c.tagName !== 'BR') walk(c);
+    });
+    walk(el);
+    gsap.fromTo(el.querySelectorAll('.w'), { yPercent: 110, opacity: 0, rotate: 3 }, { yPercent: 0, opacity: 1, rotate: 0, stagger: 0.08, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 85%' } });
+  });
+}
+splitAll();
+if (!reduce) $$('.reveal').forEach(el => gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+
+/* ---------- 01 gap tool ---------- */
+let target = 6.0;
+const stairs = $('#stairs');
+function setTarget(t) { target = t; $$('#tgtTxt').forEach(e => e.textContent = t.toFixed(1)); updateGap(); }
+$$('#chips .chip').forEach(c => c.addEventListener('click', () => { $$('#chips .chip').forEach(x => x.setAttribute('aria-pressed', 'false')); c.setAttribute('aria-pressed', 'true'); setTarget(+c.dataset.t); }));
+$('#cur').addEventListener('input', updateGap);
+function updateGap() {
+  const cur = +$('#cur').value, levels = [4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5];
+  stairs.innerHTML = levels.map(l => `<b class="${l === cur ? 'you' : (l > cur && l <= target ? 'on' : '')}" style="height:${18 + (l - 4) * 22}%"><span>${l.toFixed(1)}</span></b>`).join('');
+  const gap = Math.max(0, target - cur);
+  $('#gapN').textContent = gap.toFixed(1);
+  const lo = Math.round(gap * 10), hi = Math.round(gap * 12);
+  $('#weeks').textContent = gap === 0 ? (lang === 'ar' ? 'أنت عند الهدف' : "You're there") : (lang === 'ar' ? `${lo}–${hi} أسبوعًا` : `${lo}–${hi} weeks`);
+}
+updateGap();
+
+/* ---------- 02 ascent: pinned, scroll draws the rising line ---------- */
+const weeks = lang => (lang === 'ar'
+  ? ['تشخيص ورسم الخطة', 'الاستماع: الخرائط والنماذج', 'القراءة: صح / خطأ / غير مذكور', 'الكتابة: المهمة الأولى', 'المحادثة: الجزء الثاني', 'الكتابة: المهمة الثانية', 'اختبار تجريبي كامل', 'جاهز للاختبار']
+  : ['Diagnostic and plan', 'Listening: maps and forms', 'Reading: T / F / Not given', 'Writing Task 1', 'Speaking Part 2', 'Writing Task 2', 'Full mock test', 'Exam ready']);
+const pts = [[8, 92], [30, 84], [18, 70], [44, 60], [30, 46], [62, 36], [48, 22], [82, 8]];
+const map = $('#ascMap'), path = $('#ascPath'), pathBg = $('#ascPathBg'), svgEl = map.querySelector('svg');
+let PL = 1000, ascP = 0;
+function layoutPath() {
+  const w = map.clientWidth, h = map.clientHeight;
+  svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`); svgEl.setAttribute('preserveAspectRatio', 'none');
+  const d = 'M' + pts.map(p => (p[0] / 100 * w).toFixed(1) + ' ' + (p[1] / 100 * h).toFixed(1)).join(' L');
+  path.setAttribute('d', d); pathBg.setAttribute('d', d);
+  PL = path.getTotalLength(); path.style.strokeDasharray = PL; path.style.strokeDashoffset = PL * (1 - ascP);
+}
+const nodes = pts.map((p, i) => {
+  const n = document.createElement('div'); n.className = 'node' + (p[0] > 50 ? ' flip' : '');
+  n.style.left = p[0] + '%'; n.style.bottom = (100 - p[1]) + '%';
+  n.innerHTML = `<i class="dot"></i><div class="card"><small>W${i + 1}</small><b></b></div>`;
+  map.append(n); return n;
+});
+function labelNodes() { const w = weeks(lang); nodes.forEach((n, i) => n.querySelector('b').textContent = w[i]); }
+labelNodes(); $('#lang').addEventListener('click', labelNodes);
+layoutPath(); addEventListener('resize', layoutPath);
+if (reduce) { document.getElementById('ascent').style.height = 'auto'; document.querySelector('.asc-inner').style.position = 'relative'; document.querySelector('.asc-inner').style.padding = '90px 6vw'; }
+ScrollTrigger.create({
+  trigger: '#ascent', start: 'top top', end: '+=' + (innerHeight * 2.2), pin: !reduce, scrub: reduce ? false : 0.6,
+  onUpdate: s => {
+    const p = reduce ? 1 : s.progress;
+    ascP = p; path.style.strokeDashoffset = PL * (1 - p);
+    const k = Math.min(8, Math.floor(p * 8.6));
+    nodes.forEach((n, i) => { n.classList.toggle('on', i < k); n.classList.toggle('last', i === k - 1); });
+    $('#ascBand').textContent = String(Math.max(1, k)).padStart(2, '0'); $('#ascSkill').textContent = weeks(lang)[Math.max(0, k - 1)];
+    $('#ascWeek').textContent = lang === 'ar' ? `الأسبوع ${k} / 8` : `WEEK ${k} / 8`;
+  }
+});
+
+/* ---------- 03 try: a real 20-second listening question ---------- */
+const wave = $('#wave'); wave.innerHTML = '<i></i>'.repeat(16);
+let waveTimer = null;
+function animWave(on) { clearInterval(waveTimer); const bars = [...wave.children]; if (!on) { bars.forEach(b => b.style.height = '30%'); return; } waveTimer = setInterval(() => bars.forEach(b => b.style.height = (20 + Math.random() * 80) + '%'), 110); }
+const sada = $('#sada'), says = $('#sadaSays');
+const text = "The library opens at half past eight on weekdays, but on Saturdays it opens an hour later, and it's closed on Sundays.";
+$('#play').addEventListener('click', () => {
+  sada.className = 'sada think';
+  says.textContent = lang === 'ar' ? 'ركّز على كلمة «Saturdays».' : 'Listen for “Saturdays”.';
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'en-GB'; u.rate = 0.95;
+    const v = speechSynthesis.getVoices().find(v => /en-GB/i.test(v.lang)); if (v) u.voice = v;
+    u.onstart = () => animWave(true); u.onend = () => animWave(false);
+    speechSynthesis.speak(u); setTimeout(() => animWave(false), 9000);
+  } else { $('#tr').style.display = 'block'; }
+});
+let tries = 0;
+$$('#opts .opt').forEach(b => b.addEventListener('click', e => {
+  tries++;
+  if (b.dataset.a === '1') {
+    b.classList.add('right'); sada.className = 'sada happy';
+    $('#fb').innerHTML = lang === 'ar' ? '<b>صحيح.</b> «an hour later» تعني ساعة بعد 8:30. هذا هو الفخ المعتاد في الجزء الأول.' : '<b>Correct.</b> “An hour later” than 8:30. That is the classic Part 1 trap.';
+    says.textContent = lang === 'ar' ? (tries === 1 ? 'من أول مرة! +20 نقطة.' : 'وصلت. +10 نقاط.') : (tries === 1 ? 'First try! +20 XP.' : 'Got it. +10 XP.');
+    $('#tr').style.display = 'block'; xp(e, tries === 1 ? '+20 XP' : '+10 XP');
+    $$('#opts .opt').forEach(x => x.disabled = true);
+  } else {
+    b.classList.add('wrong'); sada.className = 'sada think';
+    $('#fb').textContent = lang === 'ar' ? 'قريب. استمع لما يتغيّر في «on Saturdays».' : 'Close. Listen to what changes “on Saturdays”.';
+  }
+}));
+function xp(e, t) {
+  const card = $('#tryCard').getBoundingClientRect();
+  for (let i = 0; i < (reduce ? 1 : 7); i++) {
+    const s = document.createElement('span'); s.className = 'xp'; s.textContent = i ? '✦' : t;
+    s.style.left = (e.clientX - card.left) + 'px'; s.style.top = (e.clientY - card.top) + 'px';
+    $('#tryCard').append(s);
+    gsap.to(s, { x: i ? (Math.random() - .5) * 220 : 0, y: i ? -60 - Math.random() * 120 : -90, opacity: 0, scale: i ? 0.6 : 1.2, duration: 1.4, ease: 'power3.out', onComplete: () => s.remove() });
+  }
+}
+
+/* ---------- 04 moments: pinned horizontal travel with parallax ---------- */
+const track = $('#momTrack');
+if (reduce) { const m = document.getElementById('moments'); m.style.height = 'auto'; m.style.padding = '90px 0 60px'; document.querySelector('.mom-head').style.position = 'relative'; Object.assign(track.style, { position: 'relative', bottom: 'auto', overflowX: 'auto', maxWidth: '100vw', marginTop: '30px' }); }
+const momTl = reduce ? null : gsap.to(track, { x: () => (document.dir === 'rtl' ? 1 : -1) * (track.scrollWidth - innerWidth), ease: 'none', scrollTrigger: { trigger: '#moments', start: 'top top', end: () => '+=' + (track.scrollWidth - innerWidth), pin: true, scrub: reduce ? false : 0.8, invalidateOnRefresh: true } });
+if (!reduce && momTl) $$('.mom img').forEach(img => gsap.fromTo(img, { xPercent: -6 }, { xPercent: 6, ease: 'none', scrollTrigger: { trigger: img, containerAnimation: momTl, start: 'left right', end: 'right left', scrub: true } }));
+
+/* ---------- 05 progress: gauge, bars, counters ---------- */
+ScrollTrigger.create({ trigger: '.dash', start: 'top 75%', once: true, onEnter: () => {
+  const v = 6.0, toPct = b => (b - 4) / (7.5 - 4) * 100;
+  $('#gArc').style.strokeDashoffset = 100 - toPct(v);
+  const a = Math.PI * (1 - toPct(6.5) / 100); const x = 100 + 80 * Math.cos(a), y = 110 - 80 * Math.sin(a);
+  const t = $('#gTgt'); t.setAttribute('x1', 100 + 66 * Math.cos(a)); t.setAttribute('y1', 110 - 66 * Math.sin(a)); t.setAttribute('x2', 100 + 94 * Math.cos(a)); t.setAttribute('y2', 110 - 94 * Math.sin(a));
+  const o = { v: 4 }; gsap.to(o, { v, duration: 1.6, ease: 'power3.out', onUpdate: () => $('#gVal').textContent = o.v.toFixed(1) });
+  $$('.skill .bar i').forEach(i => i.style.width = i.dataset.w + '%');
+} });
+$$('.count').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () => { const o = { v: 0 }; gsap.to(o, { v: +el.dataset.to, duration: 1.4, ease: 'power2.out', onUpdate: () => el.textContent = Math.round(o.v) }); } }));
+
+/* ---------- background shifts per chapter (night → dusk → ember → sand) ---------- */
+const bgs = [['#hero', '#0D0A14'], ['#gap', '#1E1430'], ['#ascent', '#2A1B3D'], ['#try', '#3A1E33'], ['#moments', '#120D18'], ['#progress', '#F4EDE4'], ['#proof', '#F4EDE4']];
+bgs.forEach(([sel, c]) => ScrollTrigger.create({ trigger: sel, start: 'top 55%', end: 'bottom 55%', onToggle: s => { if (s.isActive) { document.body.style.backgroundColor = c; document.body.classList.toggle('light', c === '#F4EDE4'); document.body.style.color = c === '#F4EDE4' ? '#14101C' : '#fff'; } } }));
+
+/* ---------- CTA (demo only) ---------- */
+$('#ctaForm').addEventListener('submit', e => { e.preventDefault(); $('#ctaMsg').textContent = lang === 'ar' ? 'نموذج تجريبي: لم يُرسل أي شيء.' : 'Concept prototype: nothing was sent.'; });
+addEventListener('load', () => ScrollTrigger.refresh());
+</script>
+</body>
+</html>
