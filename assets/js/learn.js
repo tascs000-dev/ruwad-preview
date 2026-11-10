@@ -31,14 +31,24 @@
     { id: "streak3", icon: "▲", ar: "3 أيام متتالية", en: "3-day streak", desc: ["تدربت 3 أيام متتالية", "Practised 3 days in a row"], ok: () => streak() >= 3 },
     { id: "week1", icon: "⚑", ar: "أنهيت الأسبوع 1", en: "Week 1 done", desc: ["أكملت كل دروس الأسبوع", "Finished every week 1 lesson"], ok: () => LESSONS.every((l) => prog[l.id] && prog[l.id].done) },
   ];
-  const earned = () => BADGES.filter((b) => b.ok()).map((b) => b.id);
+  // The streak is optional (journey v2): students can hide it on the practice page or in the goal step.
+  const streakOn = () => (store.get("journey", {}) || {}).streak !== false;
+  const earned = () => BADGES.filter((b) => b.ok() && (b.id !== "streak3" || streakOn())).map((b) => b.id);
+  // Wrong answers go to the shared mistake bank so they come back in revision (practice.html).
+  const logMistake = (el) => {
+    const J = window.RUWAD.journey; if (!J) return;
+    const lab = el.classList.contains("lab-item");
+    const q = lab ? `Choose the linker: ${$(".lab-sentence", el).textContent.replace(/\s+/g, " ").trim().replace("?", "___")}` : ($(".q-text", el) || el).textContent.replace(/^\s*\d+\.\s*/, "").trim();
+    const why = $(".why", el);
+    J.mistake({ id: `week1:${location.hash.slice(1) || LESSONS[0].id}:${el.dataset.item}`, src: "week1", tag: lab ? "linkers" : "week1", kind: "mcq", q, o: $$(".opt span", el).map((s) => s.textContent), a: Number(el.dataset.answer), why: why ? why.textContent : "" });
+  };
   if (!game.seen) game.seen = earned(); // don't announce badges for progress made before this feature existed
   const gameBar = () => {
     const have = earned();
     return `<div class="game-bar" data-game>
       <div class="game-stats">
         <p class="game-stat"><b data-xp>${xp()}</b> <span>${t("نقطة", "XP")}</span></p>
-        <p class="game-stat"><b data-streak>${streak()}</b> <span>${t("أيام متتالية", "day streak")}</span></p>
+        ${streakOn() ? `<p class="game-stat"><b data-streak>${streak()}</b> <span>${t("أيام متتالية", "day streak")}</span></p>` : ""}
       </div>
       <ul class="badges" aria-label="${t("الشارات", "Badges")}">${BADGES.map((b) => `<li class="badge${have.includes(b.id) ? " on" : ""}" title="${esc(t(b.desc[0], b.desc[1]))}"><span aria-hidden="true">${b.icon}</span><span class="visually-hidden">${esc(t(b.ar, b.en))}: ${have.includes(b.id) ? t("مكتسبة", "earned") : t("لم تُكتسب بعد", "not yet earned")}</span></li>`).join("")}</ul>
     </div>`;
@@ -81,7 +91,7 @@
   }
   function checkAll() {
     let right = 0, total = 0;
-    $$(".item").forEach((el) => { total++; if (checkItem(el)) right++; });
+    $$(".item").forEach((el) => { total++; if (checkItem(el)) right++; }); // wrong choices were already logged when picked
     return [right, total];
   }
 
@@ -275,6 +285,7 @@ Conclusion: restate + recommendation (universities partner with companies)</pre>
     // Instant feedback: picking an option marks it at once and locks the question.
     $$("fieldset.item[data-answer]").forEach((el) => el.addEventListener("change", () => {
       const right = checkItem(el);
+      if (!right) logMistake(el);
       $$("input", el).forEach((r) => { r.disabled = true; });
       const slot = $(".slot", el);
       if (slot) { slot.textContent = el.querySelectorAll(".opt span")[el.dataset.answer].textContent; el.classList.add("snapped"); }
