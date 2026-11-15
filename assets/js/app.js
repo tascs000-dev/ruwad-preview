@@ -250,10 +250,11 @@
       : t("لم تكتب المهمة القصيرة بعد. يحتاج المعلم إليها قبل أي قرار تسجيل، ويمكنك كتابتها لاحقًا بإعادة الاختبار.", "You skipped the short writing task. A teacher needs it before any enrolment decision; you can add it later by taking the check again.")}</p></div>`;
   }
   const SPRINT_WEEKS = [
-    t("اعرف الاختبار وابنِ المقال", "Know the test, build the essay"),
-    t("المهمة الأولى والقراءة والمحادثة", "Task 1, reading and speaking"),
-    t("الترابط والقراءة والنقاش", "Cohesion, reading and discussion"),
-    t("تدريب بالوقت واختبار تجريبي وخطة", "Timed practice, mock and plan"),
+    t("اعرف الاختبار وخطط لمقالك", "Know the test, plan your essay"),
+    t("الاستماع والمهمة الأولى", "Listening and Task 1"),
+    t("القراءة والأخطاء الشائعة والمحادثة", "Reading, common errors and speaking"),
+    t("النقاش والتدريب بالوقت", "Discussion and timed practice"),
+    t("مراجعة الاختبار التجريبي وخطتك", "Mock debrief and your plan"),
   ];
   const testLabel = (k) => ({ step: "STEP", ielts: "IELTS", toefl: "TOEFL iBT", unsure: t("لم يُحدد بعد", "Not decided yet") }[k]);
 
@@ -484,7 +485,7 @@
       const focus = [];
       if (plan && plan.partA != null) {
         if (plan.partA / 15 < 0.7) focus.push([t("القواعد والمفردات", "Grammar and vocabulary"), t("ابدأ بدرس «الأطروحة وخطة الخمس دقائق»، وراجع الأخطاء في ملاحظات كل تمرين.", "Start with \"Thesis and the five-minute plan\" and review the notes on each exercise you miss."), "thesis"]);
-        if (plan.partB / 10 < 0.7) focus.push([t("القراءة", "Reading"), t("15 دقيقة يوميًا من أسئلة صح/خطأ/غير مذكور. تأتي في الأسبوع الثاني من الدورة.", "15 minutes a day of True/False/Not Given. It comes in week 2 of the course."), ""]);
+        if (plan.partB / 10 < 0.7) focus.push([t("القراءة", "Reading"), t("15 دقيقة يوميًا من أسئلة صح/خطأ/غير مذكور. تأتي في الأسبوع الثالث من الدورة.", "15 minutes a day of True/False/Not Given. It comes in week 3 of the course."), ""]);
       }
       focus.push([t("الاستماع والكتابة والمحادثة", "Listening, writing and speaking"), t("لم تُقيَّم بعد. سلّم المقال W1 ليراجعه معلم.", "Not checked yet. Submit essay W1 for a teacher to review."), "w1"]);
       dash.innerHTML = `
