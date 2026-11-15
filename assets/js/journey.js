@@ -94,7 +94,7 @@
       { id: "daily", n: t("التحدي اليومي", "Daily challenge"), d: t(`5 أسئلة يوميًا. أكملت ${days} ${days === 1 ? "يومًا" : "أيام"}.`, `5 questions a day. ${days} ${days === 1 ? "day" : "days"} done.`), done: days >= 5, href: "practice.html#daily" },
       { id: "revise", n: t("راجع أخطاءك", "Revise your mistakes"), d: openN ? t(`${openN} للمراجعة.`, `${openN} to revise.`) : reviewed ? t("لا شيء الآن. أحسنت.", "Nothing right now. Well done.") : t("تُبنى من أخطائك في التمارين.", "Built from your mistakes in practice."), done: reviewed > 0 && openN === 0, href: "practice.html#revise" },
       { id: "speak", n: t("تدرّب على المحادثة", "Practise speaking"), d: t("سجّل إجابتك واستمع لها. لا يُرفع أي تسجيل.", "Record an answer and listen back. Nothing is uploaded."), done: (p.speak && p.speak.count) > 0, href: "practice.html#speak" },
-      { id: "enrol", n: t("السبرنت مع معلم", "The Sprint with a teacher"), d: t("8 جلسات مباشرة. سجّل في قائمة الانتظار.", "8 live sessions. Join the waiting list."), done: false, href: "pricing.html#waitlist", planned: true },
+      { id: "enrol", n: t("السبرنت مع معلم", "The Sprint with a teacher"), d: t("9 جلسات مباشرة. سجّل في قائمة الانتظار.", "9 live sessions. Join the waiting list."), done: false, href: "pricing.html#waitlist", planned: true },
     ];
   }
   function roadmapHtml(compact) {

@@ -49,7 +49,7 @@ html[dir="rtl"] .cc-route { transform: scaleX(-1); }
 .cc-head h3 { color: #fff; font-size: 1.3rem; margin: 0 0 .65rem; max-width: 14ch; position: relative; z-index: 1; }
 .cc-facts { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0; padding: 0; position: relative; z-index: 1; }
 .cc-facts li { font-size: .8rem; padding: .2rem .65rem; border-radius: 999px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .18); }
-.cc-tabs { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+.cc-tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--line); }
 .cc-tabs [role="tab"] { font: 500 .85rem/1.2 var(--body); color: var(--ink-soft); background: none; border: 0; border-bottom: 3px solid transparent; padding: .8rem .25rem .65rem; cursor: pointer; min-height: 2.9rem; }
 .cc-tabs [role="tab"] b { font: 600 1.05rem var(--display); color: var(--ink); }
 .cc-tabs [role="tab"]:hover { background: var(--canvas); }
