@@ -339,6 +339,9 @@ Conclusion: restate + recommendation (universities partner with companies)</pre>
   // Save game state, refresh the bar, and announce any badge earned just now.
   function award() {
     const before = new Set(game.seen || []);
+    // Merge days logged since page load (journey.js logDay from practice.html in another tab) so this save doesn't drop them.
+    const saved = store.get("game", {}) || {};
+    game.days = [...new Set([...(saved.days || []), ...game.days])].sort().slice(-60);
     logDay();
     const now = earned();
     game.seen = now;

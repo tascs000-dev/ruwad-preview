@@ -22,6 +22,7 @@
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   /* ---------- progress (demo mode: localStorage) ---------- */
+  // Format contract: journey.js reads `finished`, practice.js reads `result.items[].{n,result}` and `result.at`. Keep these or update both readers.
   const blank = () => ({ v: 1, stop: "intro", done: [], film: {}, predict: {}, answers: {}, result: null, spelling: {}, attempts: 0, started: null, finished: null, best: null });
   let S;
   try { S = { ...blank(), ...JSON.parse(localStorage.getItem(KEY) || "{}") }; } catch { S = blank(); }
